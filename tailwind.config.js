@@ -6,7 +6,13 @@ export default {
     "./resources/**/*.vue",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        figtree: ['Figtree', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
+        sheppards: ['Mrs Sheppards', 'cursive'],
+      }
+    },
   },
   plugins: [],
 }
