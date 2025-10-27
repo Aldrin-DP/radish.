@@ -20,23 +20,28 @@
 
             <div class="hidden md:block">
                 @guest
-                    <a href="#" 
+                    <a href="{{ route('login') }}" 
                        class="border border-gray-300 px-3 py-1 rounded-full hover:bg-[#5FB15F] hover:text-white hover:border-[#5FB15F] transition-colors duration-300">   
                         Log in
                     </a>
                 @endguest
                 @auth
-                    <a href="#" 
-                       class="border border-gray-300 px-3 py-1 rounded-full hover:bg-[#E94E63] hover:text-white hover:border-[#E94E63] transition-colors duration-300">   
-                        Log out
-                    </a>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button 
+                            type="submit"
+                            class="border border-gray-300 px-3 py-1 rounded-full hover:bg-[#E94E63] hover:text-white hover:border-[#E94E63] transition-colors duration-300"
+                        >
+                            Log out
+                        </button>
+                    </form>
                 @endauth
             </div>
         </div>
     </div>
 
     <div class="md:flex justify-between flex-row-reverse bg-white bg-opacity-50">
-        {{-- @auth --}}
+        @auth
         <div class="px-3 py-2 bg-white bg-opacity-50 flex justify-between items-center">
             <div class="flex gap-2 items-center">
                 <img 
@@ -52,23 +57,44 @@
                 <p>Recipes: 4</p>
             </div>
         </div>    
-        {{-- @endauth --}}
+        @endauth
 
         <div 
             class="p-3 flex-grow md:block" 
             :class="{ 'hidden': !open, 'block': open }"
         >
             <ul class="cursor-pointer border md:flex md:border-none">
-                <li class="bg-[#5FB15F] text-white px-4 py-1">Home</li>
+                <li class="{{ Route::is('home') ? 'bg-[#5FB15F] text-white' : 'hover:bg-[#7dc97d]' }}">
+                    <a  class="px-4 py-1 flex"
+                        href="{{ route('home') }}">
+                        Home
+                    </a>                
+                </li>
                 @auth
-                    <li class="px-4 py-1 hover:bg-[#7dc97d]">Recipes</li>
+                    <li class=" {{ Route::is('recipes*') ? 'bg-[#5FB15F] text-white' : 'hover:bg-[#7dc97d]' }}">
+                        <a 
+                            class="px-4 py-1 flex"
+                            href="{{ route('recipes.index') }}">
+                            Recipes
+                        </a>
+                    </li>
                 @endauth
                 <li class="px-4 py-1 hover:bg-[#7dc97d]">Favorites</li>                    
                 <li class="px-4 py-1 hover:bg-[#7dc97d] md:hidden">
-                    <a href="#" 
-                       class="md:border border-gray-300 md:px-3 md:py-1 md:rounded-full">
-                        Log in
-                    </a>
+                    @guest
+                        <a href="{{ route('login') }}" 
+                           class="md:border border-gray-300 md:px-3 md:py-1 md:rounded-full">
+                            Log in
+                        </a>    
+                    @endguest
+                    @auth
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="">
+                                Log out
+                            </button>
+                        </form>
+                    @endauth
                 </li>
             </ul>
         </div>
