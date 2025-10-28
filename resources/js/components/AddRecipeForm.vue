@@ -9,14 +9,22 @@
         <div v-if="showModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 p-3">
             <div class="bg-white bg-opacity-90 p-6 rounded border-t-8 border-t-[#E94E63] w-full md:w-2/3 lg:w-5/12">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold">Recipe Info <span class="text-sm font-normal text-gray-500 ms-2">{{step}} of 4</span> </h2>
+                    <h2 class="text-xl font-semibold">
+                        <span v-if="step === 1">Recipe Info</span>
+                        <span v-if="step === 2">Ingredients</span>
+                        <span v-if="step === 3">Instructions</span>
+                        <span v-if="step === 4">Dish Image</span>
+                        <span class="text-sm font-normal text-gray-500 ms-2">
+                            {{step}} of 4
+                        </span> 
+                    </h2>
                     <button @click="closeModal" class="text-gray-600 hover:text-gray-900 text-3xl">
                         &times;
                     </button>
                 </div>
 
                 <div>
-                    <form @submit.prevent @submit="nextSteps">
+                    <form @submit.prevent="nextSteps">
 
                         <div v-if="step === 1">
                             <div class="mb-2">
@@ -31,7 +39,7 @@
                                     v-if="errors['recipe_name']"
                                     class="text-sm text-red-400"
                                 >
-                                    {{ errors['recipe_name'][0] }}
+                                    {{ errors['recipe_name'] }}
                                 </span>
                             </div>
 
@@ -47,7 +55,7 @@
                                     v-if="errors['description']"
                                     class="text-sm text-red-400"
                                 >
-                                    {{ errors['description'][0] }}
+                                    {{ errors['description'] }}
                                 </span>
                             </div>
 
@@ -69,7 +77,7 @@
                                     v-if="errors['category']"
                                     class="text-sm text-red-400"
                                 >
-                                    {{ errors['category'][0] }}
+                                    {{ errors['category'] }}
                                 </span>
                             </div>
 
@@ -88,12 +96,12 @@
                                     v-if="errors['difficulty']"
                                     class="text-sm text-red-400"
                                 >
-                                    {{ errors['difficulty'][0] }}
+                                    {{ errors['difficulty'] }}
                                 </span>
                             </div>
 
                             <div class="mb-2">
-                                <label for="" class="text-sm" >Cook Time <span class="text-xs text-gray-500">(Total prep + cooking in mins)</span></label>
+                                <label for="" class="text-sm" >Cook Time <span class="text-xs text-gray-500">(Total prep + cooking time in mins)</span></label>
                                 <input 
                                     v-model="recipe.cook_time"
                                     type="number" 
@@ -104,20 +112,46 @@
                                     v-if="errors['cook_time']"
                                     class="text-sm text-red-400"
                                 >
-                                    {{ errors['cook_time'][0] }}
+                                    {{ errors['cook_time'] }}
                                 </span>
                             </div>
                         </div>
 
                         <div v-if="step === 2">
-                            asdad
+                            <div>
+                                <small class="opacity-70 block mb-1">Type 1 ingredient per line</small>
+                                <textarea 
+                                    v-model="recipe.ingredients"
+                                    rows="6" 
+                                    class="w-full p-2 focus:outline-gray-200"
+                                    placeholder="Eg. 
+2 cups of flour
+3 eggs
+1/2 cup sugar
+1 tsp vanilla extract
+                                    "
+                                >
+                                </textarea>
+                                <span 
+                                    v-if="errors['recipe_name']"
+                                    class="text-sm text-red-400"
+                                >
+                                    {{ errors['ingredients'] }}
+                                </span>
+                            </div>
+                            <div v-if="recipe.ingredients">
+                                <label for="" class="text-gray-500 block text-sm">Preview</label>
+                                <pre class="whitespace-pre-line font-poppins text-sm">
+                                    {{ recipe.ingredients }}
+                                </pre>
+                            </div>
                         </div>
 
                         <div class="flex justify-between mt-4">
                             <button
                                 v-if="step > 1"
-                                @click="prevStep"
-                                class="border text-sm px-3 py-1 rounded-full border-gray-300"
+                                @click.prevent="prevStep"
+                                class="border text-sm px-3 py-1 rounded-full border-gray-300 hover:bg-black hover:opacity-60 hover:text-white hover:border-black transition-colors duration-300"
                             >
                                 Prev Step
                             </button>
@@ -126,7 +160,8 @@
                                 :class="loading ? 'opacity-50 cursor-not-allowed' : 'bg-[#5FB15F] text-white'"
                                 class="ml-auto border text-sm px-3 py-1 rounded-full bg-[#5FB15F] text-white border-[#5FB15F]"
                             >
-                                Next Step
+                                <span v-if="step === 4">Submit</span>    
+                                <span v-else>Next Step</span>
                             </button>
                         </div>
                     </form>
@@ -154,6 +189,7 @@ import axios from 'axios';
                     category: '',
                     difficulty: '',
                     cook_time: '',
+                    ingredients: '',
                 },
                 errors: {},
                 loading: false,
@@ -161,29 +197,34 @@ import axios from 'axios';
         },
         methods: {
             nextSteps() {
-                const data = {
-                    recipe_name: this.recipe.recipe_name,
-                    description: this.recipe.description,
-                    category: this.recipe.category,
-                    difficulty: this.recipe.difficulty,
-                    cook_time: this.recipe.cook_time
-                };
-                this.loading = true;
-                axios.post('/api/recipes', data)
-                .then(response => {
-                    console.log('Success:', response);
-                    this.step++;
-                    this.errors = {};
-                })
-                .catch(error => {
-                    console.log('Full error:', error);
-                    if (error.response && error.response.data.errors){
-                        this.errors = error.response.data.errors;
+
+                const total_steps = 4;
+
+                if (this.step < total_steps){
+                    const isValid = this.validateStep();
+                    if (isValid){
+                        this.step++;
                     }
-                })
-                .finally(() => {
-                    this.loading = false;
-                });              
+                } else {
+                    const data = {
+                        recipe_name: this.recipe.recipe_name,
+                        description: this.recipe.description,
+                        category: this.recipe.category,
+                        difficulty: this.recipe.difficulty,
+                        cook_time: this.recipe.cook_time
+                    };
+
+                    axios.post('/api/recipes', data)
+                    .then(response => {
+                        console.log('Success:', response);
+                    })
+                    .catch(error => {
+                        console.log('Error:', error);
+                        if (error.response && error.response.data.errors){
+                            this.errors = error.response.data.errors;
+                        } 
+                    })
+                }             
             },  
             prevStep() {
                 this.step--;
@@ -193,6 +234,29 @@ import axios from 'axios';
             },
             closeModal() {
                 this.showModal = false;
+            },
+            validateStep() {
+                this.errors = {};
+                if (this.step === 1){
+                    if (!this.recipe.recipe_name){
+                        this.errors.recipe_name = 'Recipe name field is required.';
+                    }
+                    if (!this.recipe.category){
+                        this.errors.category = 'Category field is required.';
+                    }
+                    if (!this.recipe.difficulty){
+                        this.errors.difficulty = 'Difficulty field is required.';
+                    }
+                    if (!this.recipe.cook_time){
+                        this.errors.cook_time = 'Cook time field is required.';
+                    }
+                }
+                if (this.step === 2){
+                    if (!this.recipe.ingredients){
+                        this.errors.ingredients = 'Ingredients field is required.';
+                    }
+                }
+                return Object.keys(this.errors).length === 0;
             }
         }
     }

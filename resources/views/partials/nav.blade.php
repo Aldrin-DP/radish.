@@ -7,9 +7,12 @@
                 alt="Radish. logo"
                 width="60px"
             >
-            <h3 class="text-4xl font-sheppards text-[#E94E63]">
-                Ra<span class="text-[#5FB15F]">dish.</span>
-            </h3>
+            <a href="{{ route('home') }}">
+                <h3 class="text-4xl font-sheppards text-[#E94E63]">
+                    Ra<span class="text-[#5FB15F]">dish.</span>
+                </h3>
+            </a>
+            
         </div>
 
         <div>
@@ -64,14 +67,14 @@
             :class="{ 'hidden': !open, 'block': open }"
         >
             <ul class="cursor-pointer border md:flex md:border-none">
-                <li class="{{ Route::is('home') ? 'bg-[#5FB15F] text-white' : 'hover:bg-[#7dc97d]' }}">
+                <li class="{{ Route::is('home') ? 'bg-[#5FB15F] text-white' : 'hover:bg-[#7dc97d]' }} hover:text-white transition-all duration-300">
                     <a  class="px-4 py-1 flex"
                         href="{{ route('home') }}">
                         Home
                     </a>                
                 </li>
                 @auth
-                    <li class=" {{ Route::is('recipes*') ? 'bg-[#5FB15F] text-white' : 'hover:bg-[#7dc97d]' }}">
+                    <li class=" {{ Route::is('recipes*') ? 'bg-[#5FB15F] text-white' : 'hover:bg-[#7dc97d]' }} hover:text-white transition-all duration-300">
                         <a 
                             class="px-4 py-1 flex"
                             href="{{ route('recipes.index') }}">
