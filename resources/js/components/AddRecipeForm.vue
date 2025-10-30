@@ -1,4 +1,4 @@
-<template>
+`<template>
     <div>
         <button 
             @click="openModal"
@@ -240,8 +240,13 @@
 
 <script>
 import axios from 'axios';
+import { useToast } from 'vue-toastification';
 
     export default {
+        setup() {
+            const toast = useToast();
+            return { toast };
+        },
         data () {
             return {
                 showModal: false,
@@ -296,9 +301,14 @@ import axios from 'axios';
                     axios.post('/recipes', formData)
                     .then(response => {
                         console.log('Success:', response);
+                        this.resetForm();
+                        this.toast.success('Recipe added successfully!');
+                        this.closeModal();
+                        this.step = 1;
                     })
                     .catch(error => {
                         console.log('Error:', error);
+                        this.toast.error('Something went wrong. Please try again.');
                         if (error.response && error.response.data.errors){
                             this.errors = error.response.data.errors;
                         } 
@@ -321,16 +331,18 @@ import axios from 'axios';
                 this.errors = {};
                 if (this.step === 1){
                     if (!this.recipe.recipe_name){
-                        this.errors.recipe_name = 'Recipe name field is required.';
+                        this.errors.recipe_name = 'Recipe name is required.';
+                    } else if (this.recipe.recipe_name.length < 3){
+                        this.errors.recipe_name = 'Recipe name must be 3 or more characters.';
                     }
                     if (!this.recipe.category){
-                        this.errors.category = 'Category field is required.';
+                        this.errors.category = 'Category is required.';
                     }
                     if (!this.recipe.difficulty){
-                        this.errors.difficulty = 'Difficulty field is required.';
+                        this.errors.difficulty = 'Difficulty is required.';
                     }
                     if (!this.recipe.prep_time){
-                        this.errors.prep_time = 'Cook time field is required.';
+                        this.errors.prep_time = 'Cooking time is required.';
                     }
                 }
                 if (this.step === 2){
@@ -362,7 +374,24 @@ import axios from 'axios';
                 this.imageName = file.name;
                 this.previewUrl = URL.createObjectURL(file);
                 
+            },
+            resetForm() {
+                this.recipe = {
+                    recipe_name: '',
+                    description: '',
+                    category: '',
+                    difficulty: '',
+                    prep_time: '',
+                    ingredients: '',
+                    steps: '',
+                }
+                this.image = null;
+                this.imageName = null;
+                this.previewUrl = null;
             }
+
         }
     }
 </script>
+
+`
