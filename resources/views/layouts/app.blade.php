@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Mrs+Sheppards:wght@400;600;700&display=swap" rel="stylesheet">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Radish - Your dish, your recipe">
     <meta name="keywords" content="recipes, cooking, food, ingredients">
     <meta name="author" content="Radish">

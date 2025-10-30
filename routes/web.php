@@ -10,6 +10,9 @@ Route::get('/home', function () {
     return view('home');
 })->name('home');
 
+// routes/web.php
+Route::middleware('auth')->post('/recipes', [RecipesController::class, 'store']);
+
 Route::middleware('guest')->group(function (){
     Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);

@@ -293,7 +293,7 @@ import axios from 'axios';
                     formData.append('steps', this.recipe.steps);
                     formData.append('image', this.image);
                     
-                    axios.post('/api/recipes', formData)
+                    axios.post('/recipes', formData)
                     .then(response => {
                         console.log('Success:', response);
                     })
