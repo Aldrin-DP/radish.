@@ -6,6 +6,7 @@ import Toast from 'vue-toastification'
 import "vue-toastification/dist/index.css";
 
 import AddRecipeForm from './components/AddRecipeForm.vue';
+import RecipeList from './components/RecipeList.vue';
 
 window.Alpine = Alpine
 Alpine.start()
@@ -21,7 +22,7 @@ const options = {
 }
 
 app.component('add-recipe-form', AddRecipeForm);
-
+app.component('recipe-list', RecipeList);
 
 app.use(Toast, options);
 app.mount('#app');

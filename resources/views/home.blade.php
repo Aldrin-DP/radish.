@@ -10,9 +10,12 @@
         <div class="p-3 absolute right-0 top-1">
             <x-zondicon-search class="w-5 h-5 absolute right-1 top-0" />
         </div>
-        
-        
     </div>
+
+    <div>
+        <recipe-list></recipe-list>
+    </div>
+
 @endsection
 
 

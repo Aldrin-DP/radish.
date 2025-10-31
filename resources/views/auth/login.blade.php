@@ -4,7 +4,7 @@
     <div class="w-full md:max-w-[500px] md:m-auto border bg-white rounded">
         <div class="text-sm">
             <div class="flex flex-col items-center">
-                <img src="{{ asset('images/red logo radish.png') }}" 
+                <img src="{{ asset('images/logo.png') }}" 
                     width="80px"
                     alt="Radish logo">
                 <h4 class="text-lg">Log in</h4>
